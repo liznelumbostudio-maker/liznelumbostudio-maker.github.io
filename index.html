@@ -814,19 +814,53 @@
     input.value = val.replace(/(.{4})/g, '$1 ').trim();
   }
 
-  const STRIPE_LINK = 'https://buy.stripe.com/fZuaEPaA6fNS7sD4p1g7e00';
-  const MP_LINK = 'https://mpago.la/1W5Gmvi';
-
-  function processPayment() {
+  async function processPayment() {
     if (currentAmount < 500) {
       alert('El monto mínimo es $500 MXN');
       return;
     }
-    if (currentMethod === 'mp') {
-      window.open(MP_LINK, '_blank');
-    } else {
-      // Stripe — tarjeta, Apple Pay, Google Pay
-      window.open(STRIPE_LINK, '_blank');
+    if (!currentMethod) {
+      alert('Por favor elige un método de pago');
+      return;
+    }
+
+    // Mostrar loading
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = 'Procesando...';
+    btn.disabled = true;
+
+    try {
+      if (currentMethod === 'mp') {
+        const res = await fetch('/api/create-mp-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: currentAmount, mode: currentMode })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.open(data.url, '_blank');
+        } else {
+          alert('Error al crear el pago. Intenta de nuevo.');
+        }
+      } else {
+        const res = await fetch('/api/create-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: currentAmount, mode: currentMode })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.open(data.url, '_blank');
+        } else {
+          alert('Error al crear el pago. Intenta de nuevo.');
+        }
+      }
+    } catch (err) {
+      alert('Error de conexión. Intenta de nuevo.');
+    } finally {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
     }
   }
 
