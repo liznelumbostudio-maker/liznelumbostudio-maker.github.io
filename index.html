@@ -831,15 +831,8 @@
     btn.disabled = true;
 
     try {
-      if (currentMethod === 'mp') {
-        const res = await fetch('/api/create-mp-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: currentAmount, mode: currentMode })
-        });
-        const data = await res.json();
-        if (data.url) {
-          window.open(data.url, '_blank');
+      if 
+ 
         } else {
           alert('Error al crear el pago. Intenta de nuevo.');
         }
@@ -848,12 +841,10 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: currentAmount, mode: currentMode })
-        });
-        const data = await res.json();
-        if (data.url) {
-          window.open(data.url, '_blank');
-        } else {
-          alert('Error al crear el pago. Intenta de nuevo.');
+        })
+          
+       
+          
         }
       }
     } catch (err) {
