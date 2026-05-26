@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -8,581 +9,582 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --ink: #ffffff;
-    --cream: #1a1a1a;
-    --gold: #b8926a;
-    --gold-light: #8a6a4a;
-    --muted: #888078;
-    --line: rgba(184,146,106,0.3);
-  }
-
-  body {
-    background: #ffffff;
-    color: #1a1410;
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 1rem 4rem;
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  /* Fondo decorativo */
-  body::before {
-    content: '';
-    position: fixed;
-    top: -200px; left: -200px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(184,146,106,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  body::after {
-    content: '';
-    position: fixed;
-    bottom: -200px; right: -200px;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(184,146,106,0.05) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  header {
-    width: 100%;
-    max-width: 480px;
-    text-align: center;
-    padding: 3.5rem 0 2rem;
-    animation: fadeDown 0.7s ease both;
-  }
-
-  .logo-mark {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 1rem;
-  }
-
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-size: clamp(2rem, 8vw, 2.8rem);
-    line-height: 1.1;
-    color: #1a1410;
-    margin-bottom: 0.4rem;
-  }
-
-  h1 em {
-    font-style: italic;
-    color: var(--gold-light);
-  }
-
-  .subtitle {
-    font-size: 0.68rem;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    margin-top: 0.8rem;
-  }
-
-  .divider {
-    width: 60px;
-    height: 1px;
-    background: var(--gold);
-    margin: 1.8rem auto;
-    opacity: 0.5;
-  }
-
-  /* Card principal */
-  .card {
-    width: 100%;
-    max-width: 480px;
-    background: rgba(0,0,0,0.03);
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    padding: 2rem 1.8rem;
-    animation: fadeUp 0.7s 0.15s ease both;
-    backdrop-filter: blur(8px);
-  }
-
-  .section-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 1.2rem;
-  }
-
-  /* Selector depósito / total */
-  .amount-selector {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-    margin-bottom: 1.8rem;
-  }
-
-  .amount-btn {
-    position: relative;
-    border: 1px solid var(--line);
-    background: transparent;
-    color: #1a1410;
-    cursor: pointer;
-    padding: 1.2rem 1rem;
-    text-align: left;
-    transition: border-color 0.2s, background 0.2s;
-    border-radius: 1px;
-    font-family: inherit;
-  }
-
-  .amount-btn:hover {
-    border-color: rgba(201,169,110,0.5);
-  }
-
-  .amount-btn.active {
-    border-color: var(--gold);
-    background: rgba(184,146,106,0.1);
-  }
-
-  .amount-btn .tag {
-    font-size: 0.55rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: block;
-    margin-bottom: 0.4rem;
-  }
-
-  .amount-btn.active .tag { color: var(--gold); }
-
-  .amount-btn .price {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.6rem;
-    font-weight: 300;
-    line-height: 1;
-  }
-
-  .amount-btn .check {
-    position: absolute;
-    top: 0.6rem; right: 0.7rem;
-    width: 16px; height: 16px;
-    border: 1px solid var(--line);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 9px;
-    color: var(--gold);
-    transition: background 0.2s, border-color 0.2s;
-  }
-
-  .amount-btn.active .check {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: var(--ink);
-  }
-
-  /* Input total personalizado */
-  .custom-amount-wrap {
-    display: none;
-    margin-top: -0.5rem;
-    margin-bottom: 1.8rem;
-  }
-
-  .custom-amount-wrap.visible { display: block; }
-
-  .input-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  .amount-input-row {
-    display: flex;
-    align-items: center;
-    border: 1px solid var(--line);
-    background: rgba(0,0,0,0.02);
-    padding: 0 1rem;
-    transition: border-color 0.2s;
-  }
-
-  .amount-input-row:focus-within { border-color: var(--gold); }
-
-  .currency-sign {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    color: var(--gold);
-    margin-right: 0.5rem;
-  }
-
-  .amount-input-row input {
-    background: transparent;
-    border: none;
-    outline: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 1.1rem;
-    color: #1a1410;
-    padding: 0.9rem 0;
-    width: 100%;
-  }
-
-  .amount-input-row input::placeholder { color: var(--muted); }
-
-  /* Separador */
-  .sep {
-    height: 1px;
-    background: var(--line);
-    margin: 1.5rem 0;
-  }
-
-  /* Métodos de pago */
-  .payment-methods {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1.8rem;
-  }
-
-  .method-btn {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border: 1px solid var(--line);
-    background: transparent;
-    color: #1a1410;
-    cursor: pointer;
-    padding: 1rem 1.2rem;
-    font-family: inherit;
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    transition: border-color 0.2s, background 0.2s;
-    border-radius: 1px;
-    text-align: left;
-  }
-
-  .method-btn:hover { border-color: rgba(201,169,110,0.5); background: rgba(184,146,106,0.06); }
-
-  .method-btn.active { border-color: var(--gold); background: rgba(184,146,106,0.1); }
-
-  .method-icon {
-    width: 36px; height: 24px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .method-icon svg { width: 100%; height: auto; }
-
-  .method-info { flex: 1; }
-  .method-name { font-size: 0.72rem; color: var(--cream); }
-  .method-desc { font-size: 0.58rem; color: var(--muted); margin-top: 2px; letter-spacing: 0.05em; }
-
-  .method-arrow {
-    font-size: 0.7rem;
-    color: var(--muted);
-    transition: color 0.2s, transform 0.2s;
-  }
-
-  .method-btn:hover .method-arrow,
-  .method-btn.active .method-arrow {
-    color: var(--gold);
-    transform: translateX(3px);
-  }
-
-  /* Formulario tarjeta (simulado) */
-  .card-form {
-    display: none;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    animation: fadeUp 0.3s ease both;
-  }
-
-  .card-form.visible { display: flex; }
-
-  .field-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  .field input {
-    background: rgba(0,0,0,0.03);
-    border: 1px solid var(--line);
-    color: #1a1410;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    padding: 0.75rem 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-    border-radius: 1px;
-  }
-
-  .field input:focus { border-color: var(--gold); }
-  .field input::placeholder { color: var(--muted); }
-
-  .field.full { grid-column: 1 / -1; }
-
-  /* Botón pagar */
-  .pay-btn {
-    width: 100%;
-    background: var(--gold);
-    color: var(--ink);
-    border: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    padding: 1.1rem;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    border-radius: 1px;
-    font-weight: 400;
-  }
-
-  .pay-btn:hover { background: var(--gold-light); }
-  .pay-btn:active { transform: scale(0.99); }
-
-  /* Apple Pay / Google Pay */
-  .express-pay {
-    display: none;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    animation: fadeUp 0.3s ease both;
-  }
-
-  .express-pay.visible { display: flex; }
-
-  .express-btn {
-    width: 100%;
-    border: none;
-    border-radius: 1px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    padding: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: opacity 0.2s, transform 0.1s;
-  }
-
-  .express-btn:active { transform: scale(0.99); }
-
-  .apple-btn {
-    background: #000;
-    color: #fff;
-    border: 1px solid rgba(0,0,0,0.15);
-  }
-
-  .apple-btn:hover { opacity: 0.85; }
-
-  .gpay-btn {
-    background: #fff;
-    color: #1a1a1a;
-  }
-
-  .gpay-btn:hover { opacity: 0.9; }
-
-  /* Mercado Pago */
-  .mp-form {
-    display: none;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    animation: fadeUp 0.3s ease both;
-  }
-
-  .mp-form.visible { display: flex; }
-
-  .mp-info-box {
-    border: 1px solid rgba(0, 184, 153, 0.25);
-    background: rgba(0, 184, 153, 0.04);
-    padding: 1rem 1.2rem;
-    border-radius: 1px;
-  }
-
-  .mp-info-box .mp-logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
-    color: #00b899;
-    margin-bottom: 0.4rem;
-    letter-spacing: 0.05em;
-  }
-
-  .mp-info-box p {
-    font-size: 0.62rem;
-    color: var(--muted);
-    line-height: 1.6;
-    letter-spacing: 0.05em;
-  }
-
-  .mp-btn {
-    width: 100%;
-    background: #00b899;
-    color: #fff;
-    border: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 1.1rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    border-radius: 1px;
-  }
-
-  .mp-btn:hover { opacity: 0.85; }
-
-  /* Nota de seguridad */
-  .security-note {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    justify-content: center;
-    margin-top: 1.5rem;
-    font-size: 0.58rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
-
-  .lock-icon { color: var(--gold); font-size: 0.65rem; }
-
-  /* Resumen flotante */
-  .summary-bar {
-    width: 100%;
-    max-width: 480px;
-    margin-top: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.9rem 1.2rem;
-    border: 1px solid var(--line);
-    background: rgba(184,146,106,0.06);
-    animation: fadeUp 0.7s 0.3s ease both;
-    border-radius: 1px;
-  }
-
-  .summary-bar .label {
-    font-size: 0.58rem;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-
-  .summary-bar .total {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.4rem;
-    font-weight: 300;
-    color: var(--gold-light);
-  }
-
-  .summary-bar .type-badge {
-    font-size: 0.55rem;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    border: 1px solid var(--line);
-    padding: 0.2rem 0.5rem;
-    text-transform: uppercase;
-  }
-
-  /* Footer */
-  footer {
-    margin-top: 2.5rem;
-    font-size: 0.58rem;
-    color: rgba(100,85,65,0.5);
-    letter-spacing: 0.15em;
-    text-align: center;
-    animation: fadeUp 0.7s 0.4s ease both;
-  }
-
-  /* Animaciones */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Modal éxito */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(255,255,255,0.92);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 1rem;
-    backdrop-filter: blur(8px);
-  }
-
-  .modal-overlay.show { display: flex; }
-
-  .modal {
-    background: #ffffff;
-    border: 1px solid var(--gold);
-    max-width: 380px;
-    width: 100%;
-    padding: 2.5rem 2rem;
-    text-align: center;
-    animation: fadeUp 0.4s ease both;
-    border-radius: 1px;
-  }
-
-  .modal-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .modal h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-size: 1.8rem;
-    color: var(--gold-light);
-    margin-bottom: 0.6rem;
-  }
-
-  .modal p {
-    font-size: 0.65rem;
-    color: var(--muted);
-    line-height: 1.8;
-    letter-spacing: 0.08em;
-  }
-
-  .modal-close {
-    margin-top: 1.5rem;
-    background: transparent;
-    border: 1px solid var(--line);
-    color: #1a1410;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    padding: 0.75rem 2rem;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    border-radius: 1px;
-  }
-
-  .modal-close:hover { border-color: var(--gold); color: var(--gold); }
-
-  /* Responsive */
-  @media (max-width: 360px) {
-    .amount-selector { grid-template-columns: 1fr; }
-    .field-group { grid-template-columns: 1fr; }
-  }
+:root {
+–ink: #ffffff;
+–cream: #1a1a1a;
+–gold: #b8926a;
+–gold-light: #8a6a4a;
+–muted: #888078;
+–line: rgba(184,146,106,0.3);
+}
+
+body {
+background: #ffffff;
+color: #1a1410;
+font-family: ‘DM Mono’, monospace;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 0 1rem 4rem;
+position: relative;
+overflow-x: hidden;
+}
+
+/* Fondo decorativo */
+body::before {
+content: ‘’;
+position: fixed;
+top: -200px; left: -200px;
+width: 600px; height: 600px;
+background: radial-gradient(circle, rgba(184,146,106,0.08) 0%, transparent 70%);
+pointer-events: none;
+}
+body::after {
+content: ‘’;
+position: fixed;
+bottom: -200px; right: -200px;
+width: 500px; height: 500px;
+background: radial-gradient(circle, rgba(184,146,106,0.05) 0%, transparent 70%);
+pointer-events: none;
+}
+
+header {
+width: 100%;
+max-width: 480px;
+text-align: center;
+padding: 3.5rem 0 2rem;
+animation: fadeDown 0.7s ease both;
+}
+
+.logo-mark {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 0.7rem;
+letter-spacing: 0.35em;
+text-transform: uppercase;
+color: var(–gold);
+margin-bottom: 1rem;
+}
+
+h1 {
+font-family: ‘Cormorant Garamond’, serif;
+font-weight: 300;
+font-size: clamp(2rem, 8vw, 2.8rem);
+line-height: 1.1;
+color: #1a1410;
+margin-bottom: 0.4rem;
+}
+
+h1 em {
+font-style: italic;
+color: var(–gold-light);
+}
+
+.subtitle {
+font-size: 0.68rem;
+letter-spacing: 0.15em;
+color: var(–muted);
+margin-top: 0.8rem;
+}
+
+.divider {
+width: 60px;
+height: 1px;
+background: var(–gold);
+margin: 1.8rem auto;
+opacity: 0.5;
+}
+
+/* Card principal */
+.card {
+width: 100%;
+max-width: 480px;
+background: rgba(0,0,0,0.03);
+border: 1px solid var(–line);
+border-radius: 2px;
+padding: 2rem 1.8rem;
+animation: fadeUp 0.7s 0.15s ease both;
+backdrop-filter: blur(8px);
+}
+
+.section-label {
+font-size: 0.6rem;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+color: var(–gold);
+margin-bottom: 1.2rem;
+}
+
+/* Selector depósito / total */
+.amount-selector {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 0.75rem;
+margin-bottom: 1.8rem;
+}
+
+.amount-btn {
+position: relative;
+border: 1px solid var(–line);
+background: transparent;
+color: #1a1410;
+cursor: pointer;
+padding: 1.2rem 1rem;
+text-align: left;
+transition: border-color 0.2s, background 0.2s;
+border-radius: 1px;
+font-family: inherit;
+}
+
+.amount-btn:hover {
+border-color: rgba(201,169,110,0.5);
+}
+
+.amount-btn.active {
+border-color: var(–gold);
+background: rgba(184,146,106,0.1);
+}
+
+.amount-btn .tag {
+font-size: 0.55rem;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(–muted);
+display: block;
+margin-bottom: 0.4rem;
+}
+
+.amount-btn.active .tag { color: var(–gold); }
+
+.amount-btn .price {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 1.6rem;
+font-weight: 300;
+line-height: 1;
+}
+
+.amount-btn .check {
+position: absolute;
+top: 0.6rem; right: 0.7rem;
+width: 16px; height: 16px;
+border: 1px solid var(–line);
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 9px;
+color: var(–gold);
+transition: background 0.2s, border-color 0.2s;
+}
+
+.amount-btn.active .check {
+background: var(–gold);
+border-color: var(–gold);
+color: var(–ink);
+}
+
+/* Input total personalizado */
+.custom-amount-wrap {
+display: none;
+margin-top: -0.5rem;
+margin-bottom: 1.8rem;
+}
+
+.custom-amount-wrap.visible { display: block; }
+
+.input-label {
+font-size: 0.6rem;
+letter-spacing: 0.2em;
+color: var(–muted);
+display: block;
+margin-bottom: 0.5rem;
+}
+
+.amount-input-row {
+display: flex;
+align-items: center;
+border: 1px solid var(–line);
+background: rgba(0,0,0,0.02);
+padding: 0 1rem;
+transition: border-color 0.2s;
+}
+
+.amount-input-row:focus-within { border-color: var(–gold); }
+
+.currency-sign {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 1.2rem;
+color: var(–gold);
+margin-right: 0.5rem;
+}
+
+.amount-input-row input {
+background: transparent;
+border: none;
+outline: none;
+font-family: ‘DM Mono’, monospace;
+font-size: 1.1rem;
+color: #1a1410;
+padding: 0.9rem 0;
+width: 100%;
+}
+
+.amount-input-row input::placeholder { color: var(–muted); }
+
+/* Separador */
+.sep {
+height: 1px;
+background: var(–line);
+margin: 1.5rem 0;
+}
+
+/* Métodos de pago */
+.payment-methods {
+display: flex;
+flex-direction: column;
+gap: 0.75rem;
+margin-bottom: 1.8rem;
+}
+
+.method-btn {
+display: flex;
+align-items: center;
+gap: 1rem;
+border: 1px solid var(–line);
+background: transparent;
+color: #1a1410;
+cursor: pointer;
+padding: 1rem 1.2rem;
+font-family: inherit;
+font-size: 0.75rem;
+letter-spacing: 0.08em;
+transition: border-color 0.2s, background 0.2s;
+border-radius: 1px;
+text-align: left;
+}
+
+.method-btn:hover { border-color: rgba(201,169,110,0.5); background: rgba(184,146,106,0.06); }
+
+.method-btn.active { border-color: var(–gold); background: rgba(184,146,106,0.1); }
+
+.method-icon {
+width: 36px; height: 24px;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+}
+
+.method-icon svg { width: 100%; height: auto; }
+
+.method-info { flex: 1; }
+.method-name { font-size: 0.72rem; color: var(–cream); }
+.method-desc { font-size: 0.58rem; color: var(–muted); margin-top: 2px; letter-spacing: 0.05em; }
+
+.method-arrow {
+font-size: 0.7rem;
+color: var(–muted);
+transition: color 0.2s, transform 0.2s;
+}
+
+.method-btn:hover .method-arrow,
+.method-btn.active .method-arrow {
+color: var(–gold);
+transform: translateX(3px);
+}
+
+/* Formulario tarjeta (simulado) */
+.card-form {
+display: none;
+flex-direction: column;
+gap: 0.75rem;
+margin-bottom: 1.5rem;
+animation: fadeUp 0.3s ease both;
+}
+
+.card-form.visible { display: flex; }
+
+.field-group {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 0.75rem;
+}
+
+.field {
+display: flex;
+flex-direction: column;
+gap: 0.35rem;
+}
+
+.field input {
+background: rgba(0,0,0,0.03);
+border: 1px solid var(–line);
+color: #1a1410;
+font-family: ‘DM Mono’, monospace;
+font-size: 0.75rem;
+padding: 0.75rem 0.9rem;
+outline: none;
+transition: border-color 0.2s;
+border-radius: 1px;
+}
+
+.field input:focus { border-color: var(–gold); }
+.field input::placeholder { color: var(–muted); }
+
+.field.full { grid-column: 1 / -1; }
+
+/* Botón pagar */
+.pay-btn {
+width: 100%;
+background: var(–gold);
+color: var(–ink);
+border: none;
+font-family: ‘DM Mono’, monospace;
+font-size: 0.7rem;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+padding: 1.1rem;
+cursor: pointer;
+transition: background 0.2s, transform 0.1s;
+border-radius: 1px;
+font-weight: 400;
+}
+
+.pay-btn:hover { background: var(–gold-light); }
+.pay-btn:active { transform: scale(0.99); }
+
+/* Apple Pay / Google Pay */
+.express-pay {
+display: none;
+flex-direction: column;
+gap: 0.75rem;
+margin-bottom: 1.5rem;
+animation: fadeUp 0.3s ease both;
+}
+
+.express-pay.visible { display: flex; }
+
+.express-btn {
+width: 100%;
+border: none;
+border-radius: 1px;
+font-family: ‘DM Mono’, monospace;
+font-size: 0.75rem;
+letter-spacing: 0.1em;
+padding: 1rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 0.5rem;
+transition: opacity 0.2s, transform 0.1s;
+}
+
+.express-btn:active { transform: scale(0.99); }
+
+.apple-btn {
+background: #000;
+color: #fff;
+border: 1px solid rgba(0,0,0,0.15);
+}
+
+.apple-btn:hover { opacity: 0.85; }
+
+.gpay-btn {
+background: #fff;
+color: #1a1a1a;
+}
+
+.gpay-btn:hover { opacity: 0.9; }
+
+/* Mercado Pago */
+.mp-form {
+display: none;
+flex-direction: column;
+gap: 0.75rem;
+margin-bottom: 1.5rem;
+animation: fadeUp 0.3s ease both;
+}
+
+.mp-form.visible { display: flex; }
+
+.mp-info-box {
+border: 1px solid rgba(0, 184, 153, 0.25);
+background: rgba(0, 184, 153, 0.04);
+padding: 1rem 1.2rem;
+border-radius: 1px;
+}
+
+.mp-info-box .mp-logo {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 1rem;
+color: #00b899;
+margin-bottom: 0.4rem;
+letter-spacing: 0.05em;
+}
+
+.mp-info-box p {
+font-size: 0.62rem;
+color: var(–muted);
+line-height: 1.6;
+letter-spacing: 0.05em;
+}
+
+.mp-btn {
+width: 100%;
+background: #00b899;
+color: #fff;
+border: none;
+font-family: ‘DM Mono’, monospace;
+font-size: 0.7rem;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+padding: 1.1rem;
+cursor: pointer;
+transition: opacity 0.2s;
+border-radius: 1px;
+}
+
+.mp-btn:hover { opacity: 0.85; }
+
+/* Nota de seguridad */
+.security-note {
+display: flex;
+align-items: center;
+gap: 0.5rem;
+justify-content: center;
+margin-top: 1.5rem;
+font-size: 0.58rem;
+color: var(–muted);
+letter-spacing: 0.1em;
+}
+
+.lock-icon { color: var(–gold); font-size: 0.65rem; }
+
+/* Resumen flotante */
+.summary-bar {
+width: 100%;
+max-width: 480px;
+margin-top: 1rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0.9rem 1.2rem;
+border: 1px solid var(–line);
+background: rgba(184,146,106,0.06);
+animation: fadeUp 0.7s 0.3s ease both;
+border-radius: 1px;
+}
+
+.summary-bar .label {
+font-size: 0.58rem;
+letter-spacing: 0.2em;
+color: var(–muted);
+text-transform: uppercase;
+}
+
+.summary-bar .total {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 1.4rem;
+font-weight: 300;
+color: var(–gold-light);
+}
+
+.summary-bar .type-badge {
+font-size: 0.55rem;
+letter-spacing: 0.15em;
+color: var(–gold);
+border: 1px solid var(–line);
+padding: 0.2rem 0.5rem;
+text-transform: uppercase;
+}
+
+/* Footer */
+footer {
+margin-top: 2.5rem;
+font-size: 0.58rem;
+color: rgba(100,85,65,0.5);
+letter-spacing: 0.15em;
+text-align: center;
+animation: fadeUp 0.7s 0.4s ease both;
+}
+
+/* Animaciones */
+@keyframes fadeDown {
+from { opacity: 0; transform: translateY(-16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal éxito */
+.modal-overlay {
+position: fixed; inset: 0;
+background: rgba(255,255,255,0.92);
+display: none;
+align-items: center;
+justify-content: center;
+z-index: 100;
+padding: 1rem;
+backdrop-filter: blur(8px);
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal {
+background: #ffffff;
+border: 1px solid var(–gold);
+max-width: 380px;
+width: 100%;
+padding: 2.5rem 2rem;
+text-align: center;
+animation: fadeUp 0.4s ease both;
+border-radius: 1px;
+}
+
+.modal-icon {
+font-size: 2.5rem;
+margin-bottom: 1rem;
+}
+
+.modal h2 {
+font-family: ‘Cormorant Garamond’, serif;
+font-weight: 300;
+font-size: 1.8rem;
+color: var(–gold-light);
+margin-bottom: 0.6rem;
+}
+
+.modal p {
+font-size: 0.65rem;
+color: var(–muted);
+line-height: 1.8;
+letter-spacing: 0.08em;
+}
+
+.modal-close {
+margin-top: 1.5rem;
+background: transparent;
+border: 1px solid var(–line);
+color: #1a1410;
+font-family: ‘DM Mono’, monospace;
+font-size: 0.65rem;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+padding: 0.75rem 2rem;
+cursor: pointer;
+transition: border-color 0.2s;
+border-radius: 1px;
+}
+
+.modal-close:hover { border-color: var(–gold); color: var(–gold); }
+
+/* Responsive */
+@media (max-width: 360px) {
+.amount-selector { grid-template-columns: 1fr; }
+.field-group { grid-template-columns: 1fr; }
+}
 </style>
+
 </head>
 <body>
 
@@ -594,6 +596,7 @@
 </header>
 
 <!-- Resumen -->
+
 <div class="summary-bar">
   <div>
     <div class="label">Total a pagar</div>
@@ -605,6 +608,7 @@
 <div class="card">
 
   <!-- PASO 1: Monto -->
+
   <p class="section-label">01 — Elige el monto</p>
 
   <div class="amount-selector">
@@ -621,6 +625,7 @@
   </div>
 
   <!-- Input total personalizado -->
+
   <div class="custom-amount-wrap" id="custom-wrap">
     <label class="input-label">Ingresa el total de tu cotización (MXN)</label>
     <div class="amount-input-row">
@@ -633,58 +638,62 @@
   <div class="sep"></div>
 
   <!-- PASO 2: Método -->
+
   <p class="section-label">02 — Elige cómo pagar</p>
 
   <div class="payment-methods">
 
-    <button class="method-btn" id="method-card" onclick="selectMethod('card')">
-      <div class="method-icon">
-        <svg viewBox="0 0 36 24" fill="none">
-          <rect width="36" height="24" rx="3" fill="rgba(255,255,255,0.08)"/>
-          <rect x="0" y="7" width="36" height="5" fill="rgba(201,169,110,0.4)"/>
-          <rect x="4" y="16" width="10" height="2" rx="1" fill="rgba(255,255,255,0.3)"/>
-          <rect x="16" y="16" width="6" height="2" rx="1" fill="rgba(255,255,255,0.3)"/>
-        </svg>
-      </div>
-      <div class="method-info">
-        <div class="method-name">Tarjeta crédito / débito</div>
-        <div class="method-desc">Visa · Mastercard · AMEX</div>
-      </div>
-      <span class="method-arrow">→</span>
-    </button>
+```
+<button class="method-btn" id="method-card" onclick="selectMethod('card')">
+  <div class="method-icon">
+    <svg viewBox="0 0 36 24" fill="none">
+      <rect width="36" height="24" rx="3" fill="rgba(255,255,255,0.08)"/>
+      <rect x="0" y="7" width="36" height="5" fill="rgba(201,169,110,0.4)"/>
+      <rect x="4" y="16" width="10" height="2" rx="1" fill="rgba(255,255,255,0.3)"/>
+      <rect x="16" y="16" width="6" height="2" rx="1" fill="rgba(255,255,255,0.3)"/>
+    </svg>
+  </div>
+  <div class="method-info">
+    <div class="method-name">Tarjeta crédito / débito</div>
+    <div class="method-desc">Visa · Mastercard · AMEX</div>
+  </div>
+  <span class="method-arrow">→</span>
+</button>
 
-    <button class="method-btn" id="method-apple" onclick="selectMethod('apple')">
-      <div class="method-icon">
-        <svg viewBox="0 0 36 24" fill="none">
-          <rect width="36" height="24" rx="3" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <text x="18" y="16" text-anchor="middle" fill="white" font-size="11" font-family="Arial">⌘ Pay</text>
-        </svg>
-      </div>
-      <div class="method-info">
-        <div class="method-name">Apple Pay / Google Pay</div>
-        <div class="method-desc">Pago rápido desde tu dispositivo</div>
-      </div>
-      <span class="method-arrow">→</span>
-    </button>
+<button class="method-btn" id="method-apple" onclick="selectMethod('apple')">
+  <div class="method-icon">
+    <svg viewBox="0 0 36 24" fill="none">
+      <rect width="36" height="24" rx="3" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+      <text x="18" y="16" text-anchor="middle" fill="white" font-size="11" font-family="Arial">⌘ Pay</text>
+    </svg>
+  </div>
+  <div class="method-info">
+    <div class="method-name">Apple Pay / Google Pay</div>
+    <div class="method-desc">Pago rápido desde tu dispositivo</div>
+  </div>
+  <span class="method-arrow">→</span>
+</button>
 
-    <button class="method-btn" id="method-mp" onclick="selectMethod('mp')">
-      <div class="method-icon">
-        <svg viewBox="0 0 36 24" fill="none">
-          <rect width="36" height="24" rx="3" fill="rgba(0,184,153,0.15)"/>
-          <circle cx="14" cy="12" r="5" fill="#00b899" opacity="0.8"/>
-          <circle cx="22" cy="12" r="5" fill="#009ee3" opacity="0.8"/>
-        </svg>
-      </div>
-      <div class="method-info">
-        <div class="method-name">Mercado Pago</div>
-        <div class="method-desc">Transferencia · Saldo · OXXO</div>
-      </div>
-      <span class="method-arrow">→</span>
-    </button>
+<button class="method-btn" id="method-mp" onclick="selectMethod('mp')">
+  <div class="method-icon">
+    <svg viewBox="0 0 36 24" fill="none">
+      <rect width="36" height="24" rx="3" fill="rgba(0,184,153,0.15)"/>
+      <circle cx="14" cy="12" r="5" fill="#00b899" opacity="0.8"/>
+      <circle cx="22" cy="12" r="5" fill="#009ee3" opacity="0.8"/>
+    </svg>
+  </div>
+  <div class="method-info">
+    <div class="method-name">Mercado Pago</div>
+    <div class="method-desc">Transferencia · Saldo · OXXO</div>
+  </div>
+  <span class="method-arrow">→</span>
+</button>
+```
 
   </div>
 
   <!-- Formulario tarjeta -->
+
   <div class="card-form" id="card-form">
     <div class="field full">
       <input type="text" placeholder="Número de tarjeta" maxlength="19"
@@ -707,6 +716,7 @@
   </div>
 
   <!-- Apple / Google Pay -->
+
   <div class="express-pay" id="express-pay">
     <button class="express-btn apple-btn" onclick="processPayment()">
       <span style="font-size:1.1rem;">🍎</span> Pagar con Apple Pay
@@ -726,6 +736,7 @@
   </div>
 
   <!-- Mercado Pago -->
+
   <div class="mp-form" id="mp-form">
     <div class="mp-info-box">
       <div class="mp-logo">Mercado Pago</div>
@@ -751,8 +762,8 @@
   </span>
 </footer>
 
-
 <!-- Modal de éxito con botón para agendar -->
+
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-icon">✦</div>
@@ -765,6 +776,7 @@
 </div>
 
 <!-- Panel de reserva -->
+
 <div class="modal-overlay" id="scheduler-overlay">
   <div class="modal" style="max-width:520px;padding:2rem 1.6rem;">
     <div class="modal-icon" style="font-size:1.4rem;">📅</div>
@@ -795,6 +807,7 @@
 </div>
 
 <!-- Confirmación enviada -->
+
 <div class="modal-overlay" id="confirm-overlay">
   <div class="modal">
     <div class="modal-icon">✦</div>
@@ -982,5 +995,6 @@
     finally { btn.innerHTML = orig; btn.disabled = false; }
   }
 </script>
+
 </body>
 </html>
